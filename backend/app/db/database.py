@@ -1,12 +1,18 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from dotenv import load_dotenv
 
-# SQLite database URL
-DATABASE_URL = "sqlite:///./stayease.db"
+# Load environment variables
+load_dotenv()
+
+# Get database URL from .env
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Create engine
 engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}  # needed for SQLite
 )
 
 # Create session
