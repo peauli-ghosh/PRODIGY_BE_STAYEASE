@@ -1,102 +1,127 @@
-PROJECT REPORT
+# Stayease – Hotel Booking Backend System
 
-Title:
-Stayease – A Hotel Booking Backend System
-(Task 01: Basic REST API with CRUD Operations)
+## Overview
 
+Stayease is a backend system for a hotel booking platform, built step-by-step as part of a backend development internship. The project focuses on scalability, clean architecture, and real-world backend practices.
 
-Objective:
-To initiate the development of Stayease, a hotel booking backend system, by implementing a foundational REST API that performs CRUD operations on user data using FastAPI, following a clean and scalable architecture.
+---
 
+## Tech Stack
 
-Tech Stack:
-- Python
-- FastAPI
-- Uvicorn
-- Pydantic
+* Python
+* FastAPI
+* SQLAlchemy
+* SQLite
+* Pydantic
+* Uvicorn
+* Python-dotenv
 
+---
 
-Features Implemented (Task 01):
-- Create a new user
-- Retrieve all users
-- Retrieve a single user by ID
-- Update user details
-- Delete a user
-- Input validation (email format)
-- Duplicate email prevention
-- Proper HTTP status codes and error handling
+## Project Structure
 
-
-Project Structure:
+```bash
 backend/
 │
 ├── app/
 │   ├── main.py
+│   ├── db/
+│   │   └── database.py
+│   ├── models/
+│   │   └── user_model.py
 │   ├── schemas/
 │   │   └── user_schema.py
 │   ├── routes/
 │   │   └── user_routes.py
 │   ├── services/
-│       └── user_service.py
+│   │   └── user_service.py
 │
+├── stayease.db
+├── .env
 ├── requirements.txt
+```
 
+---
 
-API Endpoints:
+# Tasks
 
-| Method | Endpoint           | Description        |
-|--------|--------------------|--------------------|
-| POST   | /users             | Create a new user  |
-| GET    | /users             | Get all users      |
-| GET    | /users/{user_id}   | Get user by ID     |
-| PUT    | /users/{user_id}   | Update user        |
-| DELETE | /users/{user_id}   | Delete user        |
+## Task 01: Basic REST API (CRUD Operations)
 
+### Objective
 
-Sample Request:
+Build a REST API for user management using FastAPI with clean architecture.
 
-Create User:
-{
-  "name": "Peauli",
-  "email": "test@gmail.com",
-  "age": 21
-}
+### Features
 
+* Create user
+* Retrieve all users
+* Retrieve user by ID
+* Update user
+* Delete user
+* Email validation
+* Duplicate email prevention
+* Proper HTTP status handling
 
-Error Handling:
+### Limitations
 
-400 Bad Request:
-- Invalid email format
-- Duplicate email
+* In-memory storage
+* No authentication
+* No database
 
-404 Not Found:
-- User does not exist
+---
 
+## Task 02: Database Integration
 
-Key Concepts Learned:
-- REST API design principles
-- CRUD operations in backend systems
-- FastAPI routing and modular architecture
-- Data validation using Pydantic
-- Separation of concerns (schemas, services, routes)
-- Handling real-world constraints such as duplicate data
+### Objective
 
+Integrate a relational database for persistent storage using SQLAlchemy.
 
-Limitations (Current Stage):
-- Data is stored in memory (non-persistent)
-- No authentication or role-based access
-- No database integration
-- Only user module implemented
+### Features
 
+* SQLite database integration
+* ORM-based data handling
+* Persistent storage
+* CRUD operations using database
+* Email uniqueness enforced
+* Environment-based configuration using `.env`
 
-Future Scope:
-- Integrate database (SQLite/PostgreSQL)
-- Implement JWT authentication
-- Add user roles (customer and manager)
-- Develop hotel, room, and booking modules
-- Implement search and filtering
-- Add caching for performance optimization
+### Improvements from Task 01
 
+* Replaced in-memory storage with database
+* Introduced models and DB layer
+* Added configuration management
 
-Conclusion:
-Task 01 establishes the foundation of the Stayease backend system by implementing a structured and scalable REST API. This phase focuses on core backend principles that will support future enhancements such as database integration, authentication, and full booking functionality.
+### Limitations
+
+* No database migrations
+* SQLite (not production DB)
+* No authentication
+
+---
+
+## Task 03: Authentication & Authorization (Upcoming)
+
+* JWT authentication
+* Password hashing
+* Role-based access (Customer / Manager)
+
+---
+
+## Task 04: Caching (Upcoming)
+
+* Redis integration
+* Performance optimization
+
+---
+
+## Task 05: Hotel Booking System (Upcoming)
+
+* Hotels, rooms, bookings
+* Full backend system
+
+---
+
+## Conclusion
+
+The project evolves incrementally from a basic CRUD API to a full backend system. Each task builds on the previous one, ensuring a structured and scalable development process.
+
