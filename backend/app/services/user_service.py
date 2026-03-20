@@ -79,3 +79,22 @@ def delete_user(db: Session, user_id: str):
     db.commit()
 
     return {"message": "User deleted successfully"}
+
+
+def login_user(db: Session, email: str, password: str):
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    from app.core.security import verify_password, create_access_token
+
+    if not verify_password(password, user.password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token({"sub": user.email})
+
+    return {
+        "access_token": token,
+        "token_type": "bearer"
+    }
