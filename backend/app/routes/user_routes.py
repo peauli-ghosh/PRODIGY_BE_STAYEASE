@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.user_schema import (
     UserCreate,
     UserResponse,
-    UserLogin,
-    TokenResponse   # ✅ NEW
+    TokenResponse
 )
 
 from app.services.user_service import (
@@ -19,6 +19,10 @@ from app.services.user_service import (
 
 from app.db.database import get_db
 
+# 🔐 AUTH
+from app.core.deps import get_current_user
+from app.models.user_model import User
+
 router = APIRouter()
 
 
@@ -27,8 +31,12 @@ def create(user: UserCreate, db: Session = Depends(get_db)):
     return create_user(db, user)
 
 
+# 🔐 PROTECTED ROUTE
 @router.get("/users")
-def get_all(db: Session = Depends(get_db)):
+def get_all(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     return get_all_users(db)
 
 
@@ -47,7 +55,10 @@ def delete(user_id: str, db: Session = Depends(get_db)):
     return delete_user(db, user_id)
 
 
-# 🔐 LOGIN ROUTE (FIXED)
+# 🔐 LOGIN ROUTE (FIXED FOR SWAGGER)
 @router.post("/login", response_model=TokenResponse)
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    return login_user(db, user.email, user.password)
+def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    return login_user(db, form_data.username, form_data.password)

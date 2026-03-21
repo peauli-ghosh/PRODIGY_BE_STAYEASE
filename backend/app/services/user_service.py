@@ -50,7 +50,7 @@ def update_user(db: Session, user_id: str, user: UserCreate):
     if not existing_user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Check duplicate email (excluding current user)
+    # Check duplicate email
     email_check = db.query(User).filter(User.email == user.email).first()
     if email_check and email_check.id != user_id:
         raise HTTPException(
@@ -81,6 +81,7 @@ def delete_user(db: Session, user_id: str):
     return {"message": "User deleted successfully"}
 
 
+# 🔐 LOGIN SERVICE (TOKEN BASED)
 def login_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
 
@@ -92,9 +93,9 @@ def login_user(db: Session, email: str, password: str):
     if not verify_password(password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token({"sub": user.email})
+    access_token = create_access_token(data={"sub": user.email})
 
     return {
-        "access_token": token,
+        "access_token": access_token,
         "token_type": "bearer"
     }
