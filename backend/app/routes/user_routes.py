@@ -25,13 +25,13 @@ from app.models.user_model import User
 router = APIRouter()
 
 
-# ✅ CREATE USER (PUBLIC)
+# CREATE USER (PUBLIC)
 @router.post("/users", response_model=UserResponse)
 def create(user: UserCreate, db: Session = Depends(get_db)):
     return create_user(db, user)
 
 
-# 🔐 GET ALL USERS (ADMIN ONLY)
+# GET ALL USERS (ADMIN ONLY)
 @router.get("/users", response_model=list[UserResponse])
 def get_all(
     db: Session = Depends(get_db),
@@ -43,13 +43,13 @@ def get_all(
     return get_all_users(db)
 
 
-# 🔐 GET SINGLE USER
+# GET SINGLE USER
 @router.get("/users/{user_id}", response_model=UserResponse)
 def get_single(user_id: str, db: Session = Depends(get_db)):
     return get_user(db, user_id)
 
 
-# 🔐 UPDATE (ONLY SELF — ADMIN ALSO RESTRICTED)
+# UPDATE (ONLY SELF — ADMIN ALSO RESTRICTED)
 @router.put("/users/{user_id}", response_model=UserResponse)
 def update(
     user_id: str,
@@ -66,7 +66,7 @@ def update(
     return update_user(db, user_id, user)
 
 
-# 🔐 DELETE (SMART ROLE CONTROL)
+# DELETE (SMART ROLE CONTROL)
 @router.delete("/users/{user_id}")
 def delete(
     user_id: str,
@@ -75,7 +75,7 @@ def delete(
 ):
     target_user = get_user(db, user_id)
 
-    # ✅ ADMIN LOGIC
+    # ADMIN LOGIC
     if current_user.role.lower() == "admin":
 
         # ❌ Admin cannot delete another admin (unless self)
@@ -90,7 +90,7 @@ def delete(
 
         return delete_user(db, user_id)
 
-    # ✅ USER LOGIC (only self)
+    # USER LOGIC (only self)
     if str(current_user.id) != user_id:
         raise HTTPException(
             status_code=403,
@@ -100,7 +100,7 @@ def delete(
     return delete_user(db, user_id)
 
 
-# 🔐 LOGIN (Swagger OAuth)
+# LOGIN (Swagger OAuth)
 @router.post("/login", response_model=TokenResponse)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -109,13 +109,13 @@ def login(
     return login_user(db, form_data.username, form_data.password)
 
 
-# 🔐 CLEAN LOGIN (Frontend)
+# CLEAN LOGIN (Frontend)
 @router.post("/auth/login", response_model=TokenResponse)
 def auth_login(user: AuthLogin, db: Session = Depends(get_db)):
     return login_user(db, user.email, user.password)
 
 
-# 🔐 CURRENT USER
+# CURRENT USER
 @router.get("/auth/me", response_model=UserResponse)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
