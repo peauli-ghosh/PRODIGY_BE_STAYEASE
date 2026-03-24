@@ -17,6 +17,10 @@ class UserResponse(BaseModel):
     age: int
     role: str
 
+    class Config:
+        from_attributes = True   # ✅ VERY IMPORTANT
+
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
@@ -25,3 +29,8 @@ class UserLogin(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+
+
+class AuthLogin(BaseModel):
+    email: EmailStr
+    password: str

@@ -24,7 +24,7 @@ def create_user(db: Session, user: UserCreate):
         email=user.email,
         age=user.age,
         password=hashed_password,
-        role=user.role
+        role=user.role.lower()   # ✅ FIXED
     )
 
     db.add(new_user)
@@ -62,7 +62,7 @@ def update_user(db: Session, user_id: str, user: UserCreate):
     existing_user.email = user.email
     existing_user.age = user.age
     existing_user.password = hash_password(user.password)
-    existing_user.role = user.role
+    existing_user.role = user.role.lower()   # ✅ FIXED
 
     db.commit()
     db.refresh(existing_user)
@@ -81,7 +81,7 @@ def delete_user(db: Session, user_id: str):
     return {"message": "User deleted successfully"}
 
 
-# 🔐 LOGIN SERVICE (TOKEN BASED)
+# 🔐 LOGIN SERVICE
 def login_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
 

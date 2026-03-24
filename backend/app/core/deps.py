@@ -6,7 +6,7 @@ from app.db.database import get_db
 from app.models.user_model import User
 from app.core.security import decode_access_token
 
-# 🔐 This MUST match your login route
+# 🔐 OAuth scheme (linked to /login)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
