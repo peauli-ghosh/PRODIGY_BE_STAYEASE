@@ -94,7 +94,7 @@ def delete(
     if str(current_user.id) != user_id:
         raise HTTPException(
             status_code=403,
-            detail="You can only delete your own profile"
+            detail="Not authorized to perform this action"
         )
 
     return delete_user(db, user_id)

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from uuid import uuid4
+import os
 
 from app.models.user_model import User
 from app.schemas.user_schema import UserCreate
@@ -16,6 +17,16 @@ def create_user(db: Session, user: UserCreate):
             detail="Email already registered"
         )
 
+    # ADMIN CREATION CONTROL
+    if user.role.lower() == "admin":
+        ADMIN_SECRET = os.getenv("ADMIN_SECRET")
+
+        if not ADMIN_SECRET or not user.password.startswith(ADMIN_SECRET):
+            raise HTTPException(
+                status_code=403,
+                detail="Invalid admin creation key"
+            )
+
     hashed_password = hash_password(user.password)
 
     new_user = User(
@@ -24,7 +35,7 @@ def create_user(db: Session, user: UserCreate):
         email=user.email,
         age=user.age,
         password=hashed_password,
-        role=user.role.lower()   # FIXED
+        role=user.role.lower()
     )
 
     db.add(new_user)
@@ -62,7 +73,7 @@ def update_user(db: Session, user_id: str, user: UserCreate):
     existing_user.email = user.email
     existing_user.age = user.age
     existing_user.password = hash_password(user.password)
-    existing_user.role = user.role.lower()   # FIXED
+    existing_user.role = user.role.lower()
 
     db.commit()
     db.refresh(existing_user)
