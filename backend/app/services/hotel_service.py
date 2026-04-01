@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from uuid import uuid4
 from fastapi import HTTPException
 
@@ -11,7 +11,7 @@ def create_hotel(db: Session, data, owner_id: str):
         name=data.name,
         location=data.location,
         description=data.description,
-        owner_id=owner_id
+        owner_id=owner_id   # ALWAYS comes from logged-in admin
     )
 
     db.add(new_hotel)
@@ -26,7 +26,12 @@ def get_all_hotels(db: Session):
 
 
 def get_hotel(db: Session, hotel_id: str):
-    hotel = db.query(Hotel).filter(Hotel.id == hotel_id).first()
+    hotel = (
+        db.query(Hotel)
+        .options(joinedload(Hotel.rooms))  # optional but useful later
+        .filter(Hotel.id == hotel_id)
+        .first()
+    )
 
     if not hotel:
         raise HTTPException(status_code=404, detail="Hotel not found")
