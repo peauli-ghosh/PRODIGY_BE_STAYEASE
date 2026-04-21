@@ -1,6 +1,5 @@
 # Stayease — Hotel Booking System (Backend API)
 
----
 
 ## 🚀 Overview
 
@@ -185,5 +184,5 @@ This project demonstrates:
 
 **Peauli Ghosh**
 
-[GitHub](www.github.com/peauli-ghosh) • 
-[LinkedIn](www.linkedin.com/in/peauli-ghosh)
+[GitHub](https://www.github.com/peauli-ghosh) • 
+[LinkedIn](https://www.linkedin.com/in/peauli-ghosh)
