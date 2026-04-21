@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
+from datetime import datetime
 
 from app.schemas.room_schema import RoomCreate, RoomResponse
 from app.services.room_service import (
@@ -38,21 +39,32 @@ def get_by_hotel(
     return get_rooms_by_hotel(db, hotel_id)
 
 
-# ✅ IMPORTANT: SEARCH ROUTE MUST COME BEFORE /rooms/{room_id}
+# SEARCH ROOMS (WITH AVAILABILITY)
 @router.get("/rooms/search", response_model=list[RoomResponse])
 def search_rooms(
     location: Optional[str] = None,
     room_type: Optional[str] = None,
     min_price: Optional[int] = None,
     max_price: Optional[int] = None,
+    check_in: Optional[datetime] = None,
+    check_out: Optional[datetime] = None,
     db: Session = Depends(get_db)
 ):
+    # 🔥 VALIDATION FIX
+    if (check_in and not check_out) or (check_out and not check_in):
+        raise HTTPException(
+            status_code=400,
+            detail="Both check_in and check_out are required for availability search"
+        )
+
     return search_rooms_service(
         db,
         location,
         room_type,
         min_price,
-        max_price
+        max_price,
+        check_in,
+        check_out
     )
 
 
