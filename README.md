@@ -1,169 +1,189 @@
-# Stayease – Hotel Booking Backend System
-
-## Overview
-
-Stayease is a backend system for a hotel booking platform, built step-by-step as part of a backend development internship. The project focuses on scalability, clean architecture, security, and real-world backend practices.
+# Stayease — Hotel Booking System (Backend API)
 
 ---
 
-## Tech Stack
+## 🚀 Overview
 
-* Python
-* FastAPI
-* SQLAlchemy
-* SQLite
-* Pydantic
-* Uvicorn
-* Python-dotenv
-* JWT (python-jose)
-* Passlib (bcrypt)
+Stayease is a production-style backend system for a hotel booking platform, built using FastAPI.
+It demonstrates clean architecture, secure authentication, and performance optimization using Redis caching.
+
+The project simulates a real-world booking system where users can browse hotels, search rooms with filters, and make bookings with availability validation.
 
 ---
 
-## Project Structure
+## ✨ Core Features
 
-```bash
+🔐 Authentication & Authorization: 
+-JWT-based authentication (OAuth2 + custom login)
+-Password hashing using bcrypt
+-Role-based access control (Admin / User)
+-Ownership-based permissions (users can only modify their own data)
+
+🏨 Hotel & Room Management
+-Create, update, delete hotels (admin-controlled)
+-Add and manage rooms under hotels
+-Room attributes:
+-Type
+-Capacity
+-Amenities
+-Price
+-Availability
+
+🔍 Smart Room Search
+-Filter rooms by:
+-Location
+-Room type
+-Price range
+-Availability (check-in / check-out)
+-Prevents overlapping bookings using date logic
+
+📅 Booking System
+-Book available rooms
+-Automatic price calculation based on duration
+-Prevents double booking using conflict detection
+-Booking lifecycle:
+-Confirmed
+-Cancelled
+
+⚡Redis Caching (Performance Optimization)
+-Cached endpoint: /rooms/search
+-TTL-based caching (60 seconds)
+-Cache invalidation on:
+-Room creation
+-Booking creation
+-Booking cancellation
+
+---
+
+## 📌 Verified behavior
+
+First request → CACHE MISS
+Subsequent request → CACHE HIT
+
+---
+
+## 🏗 Architecture
+
+Follows a clean layered structure:
+
 backend/
 │
 ├── app/
-│   ├── main.py
-│   ├── core/
-│   │   ├── security.py
-│   │   └── deps.py
-│   ├── db/
-│   │   └── database.py
-│   ├── models/
-│   │   └── user_model.py
-│   ├── schemas/
-│   │   └── user_schema.py
-│   ├── routes/
-│   │   └── user_routes.py
-│   ├── services/
-│   │   └── user_service.py
-│
-├── stayease.db
-├── .env
-├── requirements.txt
-```
+│   ├── core/        # Security, dependencies, Redis
+│   ├── db/          # Database setup
+│   ├── models/      # SQLAlchemy models
+│   ├── schemas/     # Pydantic schemas
+│   ├── routes/      # API endpoints
+│   ├── services/    # Business logic layer
+│   └── main.py
+
+Flow:
+
+Route → Service → Model → Database
 
 ---
 
-# Tasks
+## 🧠 Tech Stack
 
-## Task 01: Basic REST API (CRUD Operations)
-
-### Objective
-
-Build a REST API for user management using FastAPI with clean architecture.
-
-### Features
-
-* Create user
-* Retrieve all users
-* Retrieve user by ID
-* Update user
-* Delete user
-* Email validation
-* Duplicate email prevention
-* Proper HTTP status handling
-
-### Limitations
-
-* In-memory storage
-* No authentication
-* No database
+-Python
+-FastAPI
+-SQLAlchemy
+-SQLite
+-Pydantic
+-JWT (python-jose)
+-Passlib (bcrypt)
+-Redis
+-Uvicorn
+-python-dotenv
 
 ---
 
-## Task 02: Database Integration
+## ⚙️ Setup Instructions
 
-### Objective
+1. Clone the repository
+git clone https://github.com/peauli-ghosh/stayease-hotel-booking-system.git
+cd stayease-hotel-booking-system/backend
 
-Integrate a relational database for persistent storage using SQLAlchemy.
+2. Create virtual environment
+python -m venv venv
+venv\Scripts\activate
 
-### Features
+3. Install dependencies
+pip install -r requirements.txt
 
-* SQLite database integration
-* ORM-based data handling
-* Persistent storage
-* CRUD operations using database
-* Email uniqueness enforced
-* Environment-based configuration using `.env`
+4. Setup environment variables
 
-### Improvements from Task 01
+Create .env file:
 
-* Replaced in-memory storage with database
-* Introduced models and DB layer
-* Added configuration management
+DATABASE_URL=sqlite:///./stayease.db
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
 
-### Limitations
+5. Start Redis
 
-* No database migrations
-* SQLite (not production DB)
+Make sure Redis is running locally:
 
----
+redis-server
 
-## Task 03: Authentication & Authorization ✅
+6. Run the server
+uvicorn app.main:app --reload
 
-### Objective
-
-Secure the backend using authentication and authorization mechanisms.
-
-### Features
-
-#### 🔐 Authentication
-
-* JWT-based authentication
-* Login system:
-
-  * OAuth2 login (`/login`) for Swagger
-  * Custom login (`/auth/login`) for frontend
-* Password hashing using bcrypt
-* Token-based session handling
-
-#### 🛡 Authorization
-
-* Role-based access control (Admin / Customer)
-* Ownership-based restrictions:
-
-  * Users can only update/delete their own profile
-* Admin rules:
-
-  * Can delete customers
-  * Cannot delete other admins
-  * Cannot update other users
-
-#### 🔒 Security Enhancements
-
-* Password never exposed in API responses
-* Role normalization (case-insensitive handling)
-* Protected routes using dependency injection
-* Proper HTTP error handling (401 / 403 / 404)
-
-#### ⚙️ System Design
-
-* Clean separation of concerns:
-
-  * Routes → Services → Models
-* Dependency-based authentication system
-* Stateless authentication using JWT
+7. Open API Docs
+http://127.0.0.1:8000/docs
 
 ---
 
-## Task 04: Caching (Upcoming)
+## 📌 Key Endpoints
 
-* Redis integration
-* Performance optimization
+-Auth
+-POST /auth/login
+-GET /auth/me
+-Hotels
+-POST /hotels
+-GET /hotels
+-GET /hotels/search
+-Rooms
+-POST /rooms
+-GET /rooms/search
+-Bookings
+-POST /bookings
+-PUT /bookings/{id}/cancel
+-GET /bookings/me
 
 ---
 
-## Task 05: Hotel Booking System (Upcoming)
+## ⚡Performance Note
 
-* Hotels, rooms, bookings
-* Full backend system
+Redis caching significantly reduces response time for repeated search queries by avoiding redundant database operations.
 
 ---
 
-## Conclusion
+## 🔮 Future Improvements
 
-The project evolves from a basic CRUD API to a secure, scalable backend system. With authentication, role-based access control, and persistent storage implemented, the foundation is now strong enough to build full business logic such as hotel and booking management.
+-Replace SQLite with PostgreSQL
+-Add pagination for search endpoints
+-Introduce rate limiting
+-Dockerize the application
+-Add automated tests
+-Implement advanced cache invalidation (key-based instead of flush)
+
+---
+
+## 📌 Conclusion
+
+This project demonstrates:
+
+-Real-world backend design patterns
+-Secure authentication & authorization
+-Efficient database handling
+-Performance optimization with caching
+
+---
+
+## 👤 Author
+
+**Peauli Ghosh**
+
+[GitHub](www.github.com/peauli-ghosh) • 
+[LinkedIn](www.linkedin.com/in/peauli-ghosh)

@@ -1,4 +1,15 @@
+# Python
 __pycache__/
 *.pyc
+
+# Environment
 .env
-stayease.db
+
+# Database
+*.db
+
+# OS
+.DS_Store
+
+# Testing
+test_*.py
